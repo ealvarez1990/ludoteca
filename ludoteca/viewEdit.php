@@ -3,7 +3,6 @@ require '../clases/AutoCarga.php';
 $bd = new BaseDatos();
 $gestor = new ManejoLudoteca($bd);
 $ludoteca= $gestor->get(Request::get("id"));
-var_dump($ludoteca);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -118,7 +117,7 @@ var_dump($ludoteca);
             <div id="page-wrapper">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1 class="page-header">Ludoteca: Alta de Juegos</h1>
+                        <h1 class="page-header">Ludoteca: Editar Juegos</h1>
                     </div>
                     <!-- /.col-lg-12 -->
                 </div>
@@ -128,22 +127,35 @@ var_dump($ludoteca);
                         <div>
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    Alta de Juegos
+                                    Editar Juegos
                                 </div>
                                 <!-- /.panel-heading -->
                                 <div class="panel-body">
                                     <div class="dataTable_wrapper">
 
-                                        <form class="form" action="phpalta.php" method="POST">
-                                            <input class="form-group input-group" type="text" name="nombre" value="" placeholder="Nombre"/><br>
-                                            <input class="form-group input-group" type="text" name="editorial" value="" placeholder="Editorial"/><br>
-                                            <input class="form-group input-group" type="text" name="jugadores" value="" placeholder="Jugadores"/><br>
-                                            <input class="form-group input-group" type="text" name="pegi" value="" placeholder="PEGI"/><br>
+                                        <form class="form" action="phpedit.php" method="POST">
+                                            <input class="form-group input-group" type="text" name="pkid" value="<?= $ludoteca->getId(); ?>" placeholder="Nombre" readonly/><br>
+                                            <input class="form-group input-group" type="text" name="nombre" value="<?= $ludoteca->getNombre(); ?>" placeholder="Nombre"/><br>
+                                            <input class="form-group input-group" type="text" name="editorial" value="<?= $ludoteca->getEditorial(); ?>" placeholder="Editorial"/><br>
+                                            <input class="form-group input-group" type="text" name="jugadores" value="<?= $ludoteca->getJugadores(); ?>" placeholder="Jugadores"/><br>
+                                            <input class="form-group input-group" type="text" name="pegi" value="<?= $ludoteca->getPegi(); ?>" placeholder="PEGI"/><br>
                                             <label for="prestado">¿Prestado?</label>
-                                            <input class="form-group input-group" type="checkbox" name="prestado" value="1"/><br>
+                                            <?php
+                                            if ($ludoteca->getPrestado()!=="1"){
+                                                echo '<input class="form-group input-group" type="checkbox" name="prestado" value="0">';
+                                            }else{
+                                                echo '<input class="form-group input-group" type="checkbox" name="prestado" value="1" checked/ >';
+                                            }
+                                            ?><br>
                                             <label for="completo">¿Completo?</label>
-                                            <input class="form-group input-group" type="checkbox" name="completo" value="1"/><br>
-                                            <input class="btn btn-info" type="submit" value="Añadir Juego" />
+                                            <?php
+                                            if ($ludoteca->getCompleto()!=="1"){
+                                                echo '<input class="form-group input-group" type="checkbox" name="completo" value="0">';
+                                            }else{
+                                                echo '<input class="form-group input-group" type="checkbox" name="completo" value="1" checked/ >';
+                                            }
+                                            ?><br>
+                                            <input class="btn btn-info" type="submit" value="Editar Juego" />
                                         </form>
                                     </div>
                                     <!-- /.table-responsive -->

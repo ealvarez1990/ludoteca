@@ -207,7 +207,7 @@ $ludoteca = $gestor->getList($paginacion->getPaginaActual(), $order, $paginacion
                                                         <a class="pag" href="?<?= $parametros->getParams(array("pagina" => $paginacion->getPrimera())) ?>"><<</a>
                                                         <a class="pag" href="?<?= $parametros->getParams(array("pagina" => $paginacion->getAnterior())) ?>"><</a>
                                                         <a class="pag" href="?<?= $parametros->getParams(array("pagina" => $paginacion->getSiguiente())) ?>">></a>
-                                                        <a class="pag" href="?<?= $parametros->getParams(array("pagina" => $paginacion->getPaginas())) ?>">>></a> 
+                                                        <a class="pag " href="?<?= $parametros->getParams(array("pagina" => $paginacion->getPaginas())) ?>">>></a> 
                                                     </td>
 
                                                     <td colspan="2">
@@ -225,8 +225,15 @@ $ludoteca = $gestor->getList($paginacion->getPaginaActual(), $order, $paginacion
                                                 </tr>
                                             </tfoot>
                                             <tbody>
-                                                <?php foreach ($ludoteca as $indice => $juego) { ?>
-                                                    <tr>
+                                                <?php foreach ($ludoteca as $indice => $juego) { 
+                                                    
+                                                    echo "<tr>";
+                                                    
+                                                    if($juego->getPrestado()==1){
+                                                        echo '<tr class="alert-danger">';
+                                                    }
+                                                    ?>
+                                                    
                                                         <td>
                                                             <?php echo $juego->getId(); ?>
                                                         </td>
@@ -246,10 +253,18 @@ $ludoteca = $gestor->getList($paginacion->getPaginaActual(), $order, $paginacion
                                                             <?php echo $juego->getPegi() ?>
                                                         </td>
                                                         <td>
-                                                            <?php echo $juego->getPrestado() ?>
+                                                             <?php if($juego->getPrestado()==1){
+                                                                 echo '<input type="checkbox" value="'.$juego->getPrestado().'" checked >';
+                                                             }else{
+                                                                  echo '<input type="checkbox" value="'.$juego->getPrestado().'" >';
+                                                             } ?>
                                                         </td>
                                                         <td>
-                                                            <?php echo $juego->getCompleto() ?>
+                                                            <?php if($juego->getCompleto()==1){
+                                                                 echo '<input type="checkbox" value="'.$juego->getCompleto().'" checked >';
+                                                             }else{
+                                                                  echo '<input type="checkbox" value="'.$juego->getCompleto().'" >';
+                                                             } ?>
                                                         </td>
 
                                                         <td>
