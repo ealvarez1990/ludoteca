@@ -109,13 +109,13 @@ if (!$sesion->isLogged()) {
                                         <a class="links" href="../habitacion/habitacion.php">Ver Habitaciones</a>
                                     </li>
                                     <li>
-                                        <a class="links" href="../prestamo/prestamo.php">Ver Prestamos</a>
+                                        <a class="links" href="../ludoteca/ludoteca.php">Ver Ludoteca</a>
                                     </li>
                                     <li>
                                         <a class="links" href="../usuario/usuario.php">Ver Usuarios</a>
                                     </li>
                                     <li>
-                                        <a class="links" href="viewAlta.php">Añadir Juego</a>
+                                        <a class="links" href="prestamo.php">Volver a Prestamos</a>
                                     </li>
                                 </ul>
                                 <!-- /.nav-third-level -->
