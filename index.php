@@ -1,9 +1,10 @@
 <?php
-require './clases/AutoCarga.php';
+require './require/comunIndex.php';
+
 $bd = new BaseDatos();
 $sesion = new Session();
 if ($sesion->isLogged()) {
-    $sesion->sendRedirect("user.php");
+    $sesion->sendRedirect("login/user.php");
     exit();
 }
 ?>

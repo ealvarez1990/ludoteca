@@ -24,62 +24,72 @@ $paginacion = new Pager($registros, Request::get("rpp"), Request::get("pagina"))
 $parametros = new QueryString();
 $op = null;
 $ludoteca = $gestor->getList($paginacion->getPaginaActual(), $order, $paginacion->getRpp(), $condicion, $parametros);
+$sesion = new Session();
+if (!$sesion->isLogged()) {
+    $sesion->sendRedirect("logout.php");
+    exit();
+} else {
 ?>
-<!DOCTYPE html>
-<html lang="en">
+    <!DOCTYPE html>
+    <html lang="en">
 
-    <head>
+        <head>
 
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
-        <meta name="author" content="">
+            <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta name="description" content="">
+            <meta name="author" content="">
 
-        <title>Ludoteca</title>
+            <title>Ludoteca</title>
 
-        <!-- Bootstrap Core CSS -->
-        <link href="../bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+            <!-- Bootstrap Core CSS -->
+            <link href="../bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        <!-- MetisMenu CSS -->
-        <link href="../bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
+            <!-- MetisMenu CSS -->
+            <link href="../bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
 
-        <!-- DataTables CSS -->
-        <link href="../bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
+            <!-- DataTables CSS -->
+            <link href="../bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
 
-        <!-- DataTables Responsive CSS -->
-        <link href="../bower_components/datatables-responsive/css/dataTables.responsive.css" rel="stylesheet">
+            <!-- DataTables Responsive CSS -->
+            <link href="../bower_components/datatables-responsive/css/dataTables.responsive.css" rel="stylesheet">
 
-        <!-- Custom CSS -->
-        <link href="../dist/css/sb-admin-2.css" rel="stylesheet">
+            <!-- Custom CSS -->
+            <link href="../dist/css/sb-admin-2.css" rel="stylesheet">
 
-        <!-- Custom Fonts -->
-        <link href="../bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-        <!-- Estilo -->
-        <link href="../css/estilo.css" rel="stylesheet" type="text/css">
-        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-        <!--[if lt IE 9]>
-            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-        <![endif]-->
+            <!-- Custom Fonts -->
+            <link href="../bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+            <!-- Estilo -->
+            <link href="../css/estilo.css" rel="stylesheet" type="text/css">
+            <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+            <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+            <!--[if lt IE 9]>
+                <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+                <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+            <![endif]-->
 
-    </head>
+        </head>
 
-    <body>
+        <body>
 
-        <div id="wrapper">
+            <div id="wrapper">
 
-            <!-- Navigation -->
-            <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="index.html">SB Admin v2.0</a>
+                <!-- Navigation -->
+                <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="#"><?php
+                            $usuario = new Usuario();
+                            $usuario = $sesion->getUser();
+                            echo $usuario->getNombre();
+                        }
+                        ?></a>
                 </div>
                 <!-- /.navbar-header -->
 
@@ -95,7 +105,7 @@ $ludoteca = $gestor->getList($paginacion->getPaginaActual(), $order, $paginacion
                             <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
                             </li>
                             <li class="divider"></li>
-                            <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                            <li><a href="../login/logout.php"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                             </li>
                         </ul>
                         <!-- /.dropdown-user -->

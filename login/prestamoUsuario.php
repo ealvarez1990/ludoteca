@@ -3,7 +3,7 @@ require '../clases/AutoCarga.php';
 $bd = new BaseDatos();
 $gestor = new ManejoPrestamo($bd);
 $gestorplu = new ManageRelations($bd);
-$sesion = new Session();
+
 
 $filtro = Request::get("filtro");
 if ($filtro === null) {
@@ -28,6 +28,7 @@ $op = null;
 $prestamos = $gestor->getList($paginacion->getPaginaActual(), $order, $paginacion->getRpp(), $condicion, $parametros);
 $prestamoJU = $gestorplu->getListJuegosPrestamo();
 
+$sesion = new Session();
 if (!$sesion->isLogged()) {
     $sesion->sendRedirect("logout.php");
     exit();
