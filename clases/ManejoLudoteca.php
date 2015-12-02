@@ -12,7 +12,7 @@ class ManejoLudoteca {
     function set(Ludoteca $ludoteca) {
         //return $this->bd->update($this->tabla, $city->get());
         $paramsWhere = array();
-        $paramsWhere["id"] = $ludoteca->getDni();
+        $paramsWhere["id"] = $ludoteca->getId();
         return $this->bd->update($this->tabla, $ludoteca->get(), $paramsWhere);
     }
 
