@@ -150,9 +150,9 @@ $ludoteca= $gestor->get(Request::get("id"));
                                             <label for="completo">¿Completo?</label>
                                             <?php
                                             if ($ludoteca->getCompleto()!=="1"){
-                                                echo '<input class="form-group input-group" type="checkbox" name="completo" value="0">';
+                                                echo '<input class="form-group input-group" type="checkbox" name="completo" value="0" />';
                                             }else{
-                                                echo '<input class="form-group input-group" type="checkbox" name="completo" value="1" checked/ >';
+                                                echo '<input class="form-group input-group" type="checkbox" name="completo" value="1" checked />';
                                             }
                                             ?><br>
                                             <input class="btn btn-info" type="submit" value="Editar Juego" />

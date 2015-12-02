@@ -229,7 +229,7 @@ $ludoteca = $gestor->getList($paginacion->getPaginaActual(), $order, $paginacion
                                                     
                                                     echo "<tr>";
                                                     
-                                                    if($juego->getPrestado()==1){
+                                                    if($juego->getPrestado()=="1"){
                                                         echo '<tr class="alert-danger">';
                                                     }
                                                     ?>
