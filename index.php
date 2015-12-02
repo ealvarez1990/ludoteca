@@ -1,9 +1,9 @@
 <?php
-require '../clases/AutoCarga.php';
+require './clases/AutoCarga.php';
 $bd = new BaseDatos();
 $sesion = new Session();
 if ($sesion->isLogged()) {
-    $sesion->sendRedirect("login/user.php");
+    $sesion->sendRedirect("user.php");
     exit();
 }
 ?>
