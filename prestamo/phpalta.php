@@ -21,7 +21,7 @@ if ($ludoteca->getPrestado()!== "1") {
     $r = $gestor->insert($prestamo);
     //var_dump($bd->getError());
     $bd->close();
-    //header("Location:prestamo.php?op=Prestamo realizado&class=alert-success&pagina=$page");
+    header("Location:prestamo.php?op=Prestamo realizado&class=alert-success&pagina=$page");
 }  else {
     $bd->close();
     header("Location:prestamo.php?op=Juego ya prestado&class=alert-danger&pagina=$page");
