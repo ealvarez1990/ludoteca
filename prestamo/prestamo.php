@@ -141,6 +141,7 @@ $prestamoJU = $gestorplu->getListJuegosPrestamo();
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">Prestamos</h1>
+                        <p class="<?= Request::get("class") ?>"><?= Request::get("op") ?></p>
                     </div>
                     <!-- /.col-lg-12 -->
                 </div>
@@ -193,7 +194,7 @@ $prestamoJU = $gestorplu->getListJuegosPrestamo();
                                                     </td>
 
                                                     <td>
-                                                        Borrar
+                                                        Devolver
                                                     </td>
 
                                                     <td>
@@ -237,53 +238,53 @@ $prestamoJU = $gestorplu->getListJuegosPrestamo();
                                                     ?>
                                                     <tr class="odd gradeX">
                                                         <td>
-    <?php
-    echo $presta->getIdprestamo();
-    ?>
+                                                            <?php
+                                                            echo $presta->getIdprestamo();
+                                                            ?>
                                                         </td>
 
                                                         <td>
-    <?php
-    echo $presta->getIdjuego();
-    ?>
+                                                            <?php
+                                                            echo $presta->getIdjuego();
+                                                            ?>
                                                         </td>
                                                         <td>
-    <?php
-    echo $ludo->getNombre();
-    ?>
-                                                        </td>
-
-                                                        <td>
-    <?php
-    echo $presta->getDni();
-    ?>
-                                                        </td>
-                                                        <td>
-    <?php
-    echo $usu->getNombre();
-    ?>
+                                                            <?php
+                                                            echo $ludo->getNombre();
+                                                            ?>
                                                         </td>
 
                                                         <td>
-    <?php
-    echo $presta->getFechaPrestamo();
-    ?>
+                                                            <?php
+                                                            echo $presta->getDni();
+                                                            ?>
                                                         </td>
                                                         <td>
-    <?php
-    echo $presta->getFechaDevolucion();
-    ?>
+                                                            <?php
+                                                            echo $usu->getNombre();
+                                                            ?>
                                                         </td>
 
                                                         <td>
-                                                            <a class="borrar" href="phpdelete.php?idprestamo=<?php echo $presta->getIdprestamo(); ?>&pagina=<?php echo Request::get("pagina") ?>">Borrar</a>
+                                                            <?php
+                                                            echo $presta->getFechaPrestamo();
+                                                            ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php
+                                                            echo $presta->getFechaDevolucion();
+                                                            ?>
+                                                        </td>
+
+                                                        <td>
+                                                            <a class="borrar" href="phpdelete.php?idprestamo=<?php echo $presta->getIdprestamo(); ?>&idjuego=<?php echo $presta->getIdjuego(); ?>&pagina=<?php echo Request::get("pagina") ?>">Devolver</a>
                                                         </td>
 
                                                         <td>
                                                             <a href="viewEdit.php?idprestamo=<?php echo $presta->getIdprestamo(); ?>&pagina=<?php echo Request::get("pagina") ?>">Editar</a><br>
                                                         </td>
                                                     </tr>
-<?php } $bd->close(); ?>
+                                                <?php } $bd->close(); ?>
                                             </tbody>
 
                                         </table>
