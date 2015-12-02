@@ -1,3 +1,12 @@
+<?php
+require '../clases/AutoCarga.php';
+$bd = new BaseDatos();
+$sesion = new Session();
+if ($sesion->isLogged()) {
+    $sesion->sendRedirect("login/user.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 
