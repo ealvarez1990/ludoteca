@@ -109,7 +109,7 @@ if (!$sesion->isLogged()) {
                                         <a class="links" href="../usuario/usuario.php">Ver Usuarios</a>
                                     </li>
                                     <li>
-                                        <a class="links" href="viewAlta.php">Añadir Juego</a>
+                                        <a class="links" href="ludoteca.php">Volver a la lista de Juegos</a>
                                     </li>
                                 </ul>
                                 <!-- /.nav-third-level -->

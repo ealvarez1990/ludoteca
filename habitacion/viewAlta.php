@@ -117,7 +117,7 @@ if (!$sesion->isLogged()) {
                                         <a class="links" href="../usuario/usuario.php">Ver Usuarios</a>
                                     </li>
                                     <li>
-                                        <a class="links" href="viewAlta.php">Insertar Habitacion</a>
+                                        <a class="links" href="habitacion.php">Volver a Habitaciones</a>
                                     </li>
                                 </ul>
                                 <!-- /.nav-third-level -->
