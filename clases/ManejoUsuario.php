@@ -46,8 +46,8 @@ class ManejoUsuario {
         return $usuario;
     }
 
-    function getList($pagina = 1, $orden = "", $nrpp = Configuracion::NRPP, $condicion="1=1", $parametros=array()) {
-        $ordenPredeterminado="$orden, dni, nombre, idhabitacion";
+    function getList($pagina = 1, $orden = "", $nrpp = Configuracion::NRPP, $condicion = "1=1", $parametros = array()) {
+        $ordenPredeterminado = "$orden, dni, nombre, idhabitacion";
         if (trim($orden) === "" || trim($orden) === NULL) {
             $ordenPredeterminado = "dni, nombre, idhabitacion";
         }
@@ -61,16 +61,16 @@ class ManejoUsuario {
         }
         return $r; //Devuelve un array de ciudades;
     }
-    
+
     function paginacion() {
         $sql = "select count from $this->bd";
     }
-    
+
     function count($condicion = "1=1", $parametros = array()) {
         return $this->bd->count($this->tabla, $condicion, $parametros);
     }
 
-     function getValuesSelect() {
+    function getValuesSelect() {
         $this->bd->query($this->tabla, "dni, nombre ", array(), "dni");
         $array = array();
         while ($fila = $this->bd->getRow()) {

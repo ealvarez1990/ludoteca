@@ -17,3 +17,9 @@ a{
 .links{
     margin-bottom: 25px;
 }
+
+#loginfondo{
+   background-image: url("../img/DARK-SOULS-II-THUMBNAIL.jpg"); 
+   background-size: auto;
+   background-repeat: no-repeat;
+}

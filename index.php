@@ -44,13 +44,13 @@
                             <h3 class="panel-title">Login</h3>
                         </div>
                         <div class="panel-body show-grid">
-                            <form role="form"  action="login/phplogin.php" method="POST">
+                            <form role="form"  action="./login/phplogin.php" method="POST">
                                 <fieldset>
                                     <div class="form-group">
-                                        <input class="form-control"  name="login" value="" placeholder="LOGIN" type="text" autofocus>
+                                        <input class="form-control"  name="nombre" value="" placeholder="NOMBRE" type="text" autofocus>
                                     </div>
                                     <div class="form-group">
-                                        <input class="form-control" type="password" name="pass" value="" placeholder="PASSWORD">
+                                        <input class="form-control" type="password" name="dni" value="" placeholder="DNI">
                                     </div>
                                     <!-- Change this to a button or input when using this as a form -->
                                     <input type="submit" class="btn btn-lg btn-success btn-block" value="Login">

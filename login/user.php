@@ -1,17 +1,36 @@
 <?php
 require '../clases/AutoCarga.php';
+$bd = new BaseDatos();
 $sesion = new Session();
-$canciones = scandir('../subir/mp3/');
-$sesion->set("canciones", $canciones);
+$gestor = new ManejoLudoteca($bd);
+
+$filtro = Request::get("filtro");
+if ($filtro === null) {
+    $params = array();
+    $condicion = "1=1";
+} else {
+    $params["filtro"] == $filtro . "%";
+    $condicion = "nombre like :filtro";
+}
+
+$order = Request::get("order");
+$orderby = "id, nombre, editorial";
+
+if ($order !== null) {
+    $orderby = "$order, $orderby";
+}
+
+$registros = $gestor->count($condicion, $params);
+$paginacion = new Pager($registros, Request::get("rpp"), Request::get("pagina"));
+$parametros = new QueryString();
+$op = null;
+$ludoteca = $gestor->getList($paginacion->getPaginaActual(), $order, $paginacion->getRpp(), $condicion, $parametros);
+
 
 if (!$sesion->isLogged()) {
     $sesion->sendRedirect("logout.php");
     exit();
 } else {
-
-    $canciones = $sesion->get("canciones");
-    $cancioncapturada = Request::get("cancionmp3");
-    $keycapturada = Request::get("key");
     ?>
 
     <!DOCTYPE html>
@@ -25,7 +44,7 @@ if (!$sesion->isLogged()) {
             <meta name="description" content="">
             <meta name="author" content="">
 
-            <title>PODCAST</title>
+            <title>Ludoteca</title>
 
             <!-- Bootstrap Core CSS -->
             <link href="../bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -33,28 +52,29 @@ if (!$sesion->isLogged()) {
             <!-- MetisMenu CSS -->
             <link href="../bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
 
-            <!-- Timeline CSS -->
-            <link href="../dist/css/timeline.css" rel="stylesheet">
+            <!-- DataTables CSS -->
+            <link href="../bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
+
+            <!-- DataTables Responsive CSS -->
+            <link href="../bower_components/datatables-responsive/css/dataTables.responsive.css" rel="stylesheet">
 
             <!-- Custom CSS -->
             <link href="../dist/css/sb-admin-2.css" rel="stylesheet">
 
-            <!-- Morris Charts CSS -->
-            <link href="../bower_components/morrisjs/morris.css" rel="stylesheet">
-
             <!-- Custom Fonts -->
             <link href="../bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-
+            <!-- Estilo -->
+            <link href="../css/estilo.css" rel="stylesheet" type="text/css">
             <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
             <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
             <!--[if lt IE 9]>
                 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
                 <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
             <![endif]-->
-            <link href="css/estilo.css" rel="stylesheet">
+
         </head>
 
-        <body id="loginfondo">
+        <body>
 
             <div id="wrapper">
 
@@ -67,8 +87,10 @@ if (!$sesion->isLogged()) {
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="../login/user.php"><?php
-                            echo $sesion->getUser();
+                        <a class="navbar-brand" href="#"><?php
+                            $usuario = new Usuario();
+                            $usuario = $sesion->getUser();
+                            echo $usuario->getNombre();
                         }
                         ?></a>
                 </div>
@@ -81,12 +103,12 @@ if (!$sesion->isLogged()) {
                             <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
                         </a>
                         <ul class="dropdown-menu dropdown-user">
-                            <li><a href="#"><i class="fa fa-user fa-fw"></i>Editar perfil</a>
+                            <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
                             </li>
-                            <li><a href="#"><i class="fa fa-gear fa-fw"></i> Herramientas</a>
+                            <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
                             </li>
                             <li class="divider"></li>
-                            <li><a href="logout.php"><i class="fa fa-sign-out fa-fw"></i>Cerrar sesión</a>
+                            <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                             </li>
                         </ul>
                         <!-- /.dropdown-user -->
@@ -98,27 +120,17 @@ if (!$sesion->isLogged()) {
                 <div class="navbar-default sidebar" role="navigation">
                     <div class="sidebar-nav navbar-collapse">
                         <ul class="nav" id="side-menu">
-
-
                             <li>
-                                <a href="#"><i class="fa fa-wrench fa-fw"></i>Administracion<span class="fa arrow"></span></a>
+                                <a href="#"><i class="fa fa-sitemap fa-fw"></i> Menu<span class="fa arrow"></span></a>
+
+                                </h3>
                                 <ul class="nav nav-second-level">
                                     <li>
-                                        <a href="../subir/vistasubir.php">Añadir cancion</a>
-                                    </li>
-                                    <li>
-                                        <a href="vistacategorias.php">Ver lista de categorias</a>
-                                    </li>
-                                    <li>
-                                        <a href="vistausuarios.php">Ver lista de usuarios</a>
-                                    </li>
-                                    <li>
-                                        <a href="vistaprivadas.php">Ver canciones privadas</a>
+                                        <a class="links" href="../login/prestamoUsuario.php">Ver Prestamos</a>
                                     </li>
                                 </ul>
-                                <!-- /.nav-second-level -->
+                                <!-- /.nav-third-level -->
                             </li>
-
                         </ul>
                     </div>
                     <!-- /.sidebar-collapse -->
@@ -129,217 +141,157 @@ if (!$sesion->isLogged()) {
             <div id="page-wrapper">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1 class="page-header">Escritorio</h1>
-                        <h3 class="<?php echo Request::get("class") ?>"><?php echo Request::get("mensaje") ?></h3>
+                        <h1 class="page-header">Ludoteca</h1>
                     </div>
                     <!-- /.col-lg-12 -->
                 </div>
                 <!-- /.row -->
                 <div class="row">
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-upload fa-5x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge">Subir Canciones</div>
-                                    </div>
+                    <div class="col-lg-12">
+                        <div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    Tabla Ludoteca
                                 </div>
-                            </div>
-                            <a href="../subir/vistasubir.php">
-                                <div class="panel-footer">
-                                    <span class="pull-left">Sube  tus canciones</span>
-                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-green">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-database fa-5x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge">Musica por categorias</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="../login/vistacategorias.php">
-                                <div class="panel-footer">
-                                    <span class="pull-left">Tu musica ordenada</span>
-                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-yellow">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-code fa-5x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge">Canciones privadas<br></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="../login/vistaprivadas.php">
-                                <div class="panel-footer">
-                                    <span class="pull-left">Guarda algo para ti</span>
-                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-red">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-list-alt fa-5x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge">Lista de usuarios</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="../login/vistausuarios.php">
-                                <div class="panel-footer">
-                                    <span class="pull-left">Coonoce tu alrededor</span>
-                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.row -->
-                <div class="row">
-                    <div class="col-lg-8">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <i class="fa fa-play-circle-o fa-fw"></i> Reproductor
-                                <div class="pull-right">
+                                <!-- /.panel-heading -->
+                                <div class="panel-body">
+                                    <div class="dataTable_wrapper">
+                                        <table class="table table-striped table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <td>
+                                                        ID
+                                                        <a href="?<?= $parametros->getParams(array("order" => "id asc")) ?>">▲</a>
+                                                        <a href="?<?= $parametros->getParams(array("order" => "id desc")) ?>">▼</a>
+                                                    </td>
+                                                    <td>
+                                                        NOMBRE
+                                                        <a href="?<?= $parametros->getParams(array("order" => "nombre asc")) ?>">▲</a>
+                                                        <a href="?<?= $parametros->getParams(array("order" => "nombre desc")) ?>">▼</a>
+                                                    </td>
+                                                    <td>
+                                                        EDITORIAL
+                                                        <a href="?<?= $parametros->getParams(array("order" => "editorial asc")) ?>">▲</a>
+                                                        <a href="?<?= $parametros->getParams(array("order" => "editorial desc")) ?>">▼</a>
+                                                    </td>
+                                                    <td>
+                                                        JUGADORES
+                                                        <a href="?<?= $parametros->getParams(array("order" => "jugadores asc")) ?>">▲</a>
+                                                        <a href="?<?= $parametros->getParams(array("order" => "jugadores desc")) ?>">▼</a>
+                                                    </td>
+                                                    <td>
+                                                        PEGI
+                                                        <a href="?<?= $parametros->getParams(array("order" => "pegi asc")) ?>">▲</a>
+                                                        <a href="?<?= $parametros->getParams(array("order" => "pegi desc")) ?>">▼</a>
+                                                    </td>
+                                                    <td>
+                                                        PRESTADO
+                                                        <a href="?<?= $parametros->getParams(array("order" => "prestado asc")) ?>">▲</a>
+                                                        <a href="?<?= $parametros->getParams(array("order" => "prestado desc")) ?>">▼</a>
+                                                    </td>
+                                                    <td>
+                                                        COMPLETO
+                                                        <a href="?<?= $parametros->getParams(array("order" => "completo asc")) ?>">▲</a>
+                                                        <a href="?<?= $parametros->getParams(array("order" => "completo desc")) ?>">▼</a>
+                                                    </td>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="2">&nbsp;</td>
+                                                    <td colspan="3">
+                                                        <a class="pag" href="?<?= $parametros->getParams(array("pagina" => $paginacion->getPrimera())) ?>"><<</a>
+                                                        <a class="pag" href="?<?= $parametros->getParams(array("pagina" => $paginacion->getAnterior())) ?>"><</a>
+                                                        <a class="pag" href="?<?= $parametros->getParams(array("pagina" => $paginacion->getSiguiente())) ?>">></a>
+                                                        <a class="pag " href="?<?= $parametros->getParams(array("pagina" => $paginacion->getPaginas())) ?>">>></a> 
+                                                    </td>
 
-                                </div>
-                            </div>
-                            <!-- /.panel-heading -->
-                            <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-lg-4">
-
-                                        <div class="table-responsive">
-                                            Lista de reproduccion:
-
-                                            <table class="table table-striped table-bordered table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Titulo</th>
-                                                        <th>Usuario</th>
-                                                        <th>Categoria</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php
-                                                    foreach ($canciones as $key => $value) {
-                                                        if (substr($value, -4) == ".mp3") {
-                                                            ?><tr class="odd gradeX" >
-                                                                <td>
-                                                                    <a href="user.php?cancionmp3=<?php echo $value; ?>" ><?php echo ManejadorArchivos::obtenerTituloCancion($value, ".mp3"); ?></a>
-                                                                </td>
-                                                                <td>
-                                                                    <?php
-                                                                    echo ManejadorArchivos::obtenerUsuario($value);
-                                                                    ?>
-                                                                </td>
-                                                                <td>
-                                                                    <?php
-                                                                    echo ManejadorArchivos::obtenerCategoria($value);
-                                                                    ?></a>
-                                                                </td>
-                                                            </tr>
+                                                    <td colspan="2">
+                                                        <form id="fselect" action="?<?= $parametros->get("rpp") ?>" method="GET">
                                                             <?php
-                                                        }
-                                                        //<?php echo Request::get("imagenportada") 
+                                                            $array = ["10" => "10", "25" => "25", "50" => "50", "100" => "100"];
+                                                            echo Util::getSelect("rpp", $array, 10, false);
+                                                            ?>  
+                                                            <input type="hidden" name="order" value="<?php echo Request::get("order") ?>" />
+                                                            <input type="hidden" name="sort" value="<?php echo Request::get("sort") ?>" />
+                                                            <input type="hidden" name="pagina" value="<?php echo Request::get("pagina") ?>" />
+                                                            <input type="submit" value="Ver" />    
+                                                        </form>  
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                <?php
+                                                foreach ($ludoteca as $indice => $juego) {
+
+                                                    echo "<tr>";
+
+                                                    if ($juego->getPrestado() == "1") {
+                                                        echo '<tr class="alert-danger">';
                                                     }
                                                     ?>
 
-                                                </tbody>
-                                            </table>
+                                                <td>
+                                                    <?php echo $juego->getId(); ?>
+                                                </td>
 
-                                        </div>
+                                                <td>
+                                                    <?php echo $juego->getNombre(); ?>
+                                                </td>
 
-                                        <!-- /.table-responsive -->
-                                    </div>
-                                    <div class="panel-body">
-                                        <div class="row">
-                                            <div class="col-lg-8">
-                                                <div class="table-responsive">
+                                                <td>
+                                                    <?php echo $juego->getEditorial(); ?>
+                                                </td>
+
+                                                <td>
+                                                    <?php echo $juego->getJugadores(); ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $juego->getPegi() ?>
+                                                </td>
+                                                <td>
                                                     <?php
-                                                    //Zona de pruebas
-                                                    $cogerCanciondelGET = Request::get("cancionmp3");
-                                                    $usuarioCancion = ManejadorArchivos::obtenerUsuario($cogerCanciondelGET);
-                                                    $nombreOriginal = ManejadorArchivos::obtenerTituloCancionSinExtension($cogerCanciondelGET, ".mp3");
-                                                    
-                                                    foreach ($canciones as $key => $value) {
-//                                                        $cadena=ManejadorArchivos::obtenerTituloCancionSinExtension($value,".jpg");
-//                                                        $cadenaNombreCancionenimagen=ManejadorArchivos::trocea($cadena, "_P_");
-                                                        $extension=NULL;
-                                                        if(substr($value, -4) == ".png" || substr($value, -4) == ".jpg" || substr($value, -4) == ".gif"){
-                                                            $extension=substr($value, -4);
-                                                        }
-                                                        
-                                                        $cadenaNombreCancionenimagen=  ManejadorArchivos::nombreCancionImagen($value, $extension);
-                                                        if ($nombreOriginal==$cadenaNombreCancionenimagen) {
-                                                            if(substr($value, -4) == ".png" || substr($value, -4) == ".jpg"){
-                                                            ?>
-                                                            <img  class="img-responsive img-rounded" id="portada" alt="portada" src="../subir/mp3/<?php echo $value ?>"> 
-                                                            <?php
-                                                            }
-                                                        }
+                                                    if ($juego->getPrestado() == 1) {
+                                                        echo '<input type="checkbox" value="' . $juego->getPrestado() . '" checked >';
+                                                    } else {
+                                                        echo '<input type="checkbox" value="' . $juego->getPrestado() . '" >';
                                                     }
                                                     ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    if ($juego->getCompleto() == 1) {
+                                                        echo '<input type="checkbox" value="' . $juego->getCompleto() . '" checked >';
+                                                    } else {
+                                                        echo '<input type="checkbox" value="' . $juego->getCompleto() . '" >';
+                                                    }
+                                                    ?>
+                                                </td>
+                                                </tr>
+                                                <?php
+                                            } $bd->close();
+                                            ?>
+                                            </tbody>
 
-                                                    <br>
-                                                    <audio controls autoplay>
-                                                        <source id="reproductor" src="<?php echo "../subir/mp3/" . Request::get("cancionmp3") ?>" type="audio/mp3">
-                                                        Your browser does not support the audio element.
-                                                    </audio>
-                                                </div>
-                                            </div>
-                                            <!-- /.col-lg-4 (nested) -->
-                                            <div class="col-lg-8">
-                                                <div id="morris-bar-chart"></div>
-                                            </div>
-                                            <!-- /.col-lg-8 (nested) -->
-                                        </div>
+                                        </table>
                                     </div>
-                                </div>
-                                <!-- /.row -->
-                            </div>
-                            <!-- /.panel-body -->
-                        </div>
-                        <!-- /.panel -->
-                    </div>
-                    <!-- /.col-lg-8 -->
+                                    <!-- /.table-responsive -->
 
-                    <!-- /.col-lg-4 -->
+                                </div>
+                                <!-- /.panel-body -->
+                            </div>
+                            <!-- /.panel -->
+                        </div>
+                        <!-- /.col-lg-12 -->
+                    </div>
+                    <!-- /.row -->
+
                 </div>
-                <!-- /.row -->
+                <!-- /.table-responsive -->
             </div>
-            <!-- /#page-wrapper -->
-
+            <!-- /.panel-body -->
         </div>
-        <!-- /#wrapper -->
-
+        <!-- /.panel -->
         <!-- jQuery -->
         <script src="../bower_components/jquery/dist/jquery.min.js"></script>
 
@@ -349,16 +301,24 @@ if (!$sesion->isLogged()) {
         <!-- Metis Menu Plugin JavaScript -->
         <script src="../bower_components/metisMenu/dist/metisMenu.min.js"></script>
 
-        <!-- Morris Charts JavaScript -->
-        <script src="../bower_components/raphael/raphael-min.js"></script>
-        <script src="../bower_components/morrisjs/morris.min.js"></script>
-        <script src="../js/morris-data.js"></script>
+        <!-- DataTables JavaScript -->
+        <script src="../bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
+        <script src="../bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
 
         <!-- Custom Theme JavaScript -->
-
         <script src="../dist/js/sb-admin-2.js"></script>
+
+        <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+        <script>
+            $(document).ready(function () {
+                $('#dataTables-example').DataTable({
+                    responsive: true
+                });
+            });
+        </script>
         <script src="../js/codigo.js"></script>
 
     </body>
 
 </html>
+
