@@ -3,6 +3,7 @@ require '../clases/AutoCarga.php';
 $bd = new BaseDatos();
 $gestor = new ManejoPrestamo($bd);
 $gestorplu = new ManageRelations($bd);
+$sesion = new Session();
 
 $filtro = Request::get("filtro");
 if ($filtro === null) {
@@ -108,7 +109,7 @@ if (!$sesion->isLogged()) {
                             <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
                             </li>
                             <li class="divider"></li>
-                            <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                            <li><a href="logout.php"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                             </li>
                         </ul>
                         <!-- /.dropdown-user -->
